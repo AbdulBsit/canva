@@ -15,7 +15,8 @@ import TextInputScreen from '../components/TextInputScreen';
 import useActions from '../canvasState/Action';
 import {CanvasContext} from '../canvasState/Store';
 const ECardScreen = () => {
-  const {loadTemplate} = useActions();
+  // const [template] = useContext(CanvasContext);
+  const {loadTemplate, editBackgroundImage} = useActions();
   const [editPannel, setEditPannel] = useState(null);
   const [textScreen, setTextScreen] = useState(false);
   useEffect(() => {
@@ -74,6 +75,13 @@ const ECardScreen = () => {
       },
     });
   }, []);
+  const handleBackgroundImage = () => {
+    // open gallery to chooose photo
+    Alert.alert('Uploaded Image');
+    editBackgroundImage(
+      'https://cdn.zeebiz.com/sites/default/files/styles/zeebiz_850x478/public/2019/01/17/69037-uri.jpg',
+    );
+  };
   const renderAddPannel = () => {
     return (
       <View style={styles.panel}>
@@ -87,9 +95,7 @@ const ECardScreen = () => {
           />
           <Text style={styles.panelText}>Add Text</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.icon}
-          onPress={() => Alert.alert('ADD Background Image')}>
+        <TouchableOpacity style={styles.icon} onPress={handleBackgroundImage}>
           <Icon style={styles.panelIcon} name="image" size={30} />
           <Text style={styles.panelText}>Add Background Image</Text>
         </TouchableOpacity>

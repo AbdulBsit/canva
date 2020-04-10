@@ -1,5 +1,11 @@
 import React, {useRef, useContext, useEffect, useState} from 'react';
-import {Animated, PanResponder, Text, TouchableOpacity} from 'react-native';
+import {
+  Animated,
+  PanResponder,
+  Text,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import {CanvasContext} from '../canvasState/Store';
 import useActions from '../canvasState/Action';
 import Feather from 'react-native-vector-icons/Feather';
@@ -84,9 +90,12 @@ export default function DraggableText({
         {children}
       </Text>
       {editId === id && (
-        <TouchableOpacity onPress={handleDelete}>
-          <Feather name="trash-2" size={22} />
-        </TouchableOpacity>
+        <Feather
+          style={{backgroundColor: 'white', textAlign: 'center'}}
+          onPress={handleDelete}
+          name="trash-2"
+          size={22}
+        />
       )}
     </Animated.View>
   );

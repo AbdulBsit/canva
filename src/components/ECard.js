@@ -6,7 +6,7 @@ import DraggableText from './DraggableText';
 const ECard = ({setEditPannel, editPannel}) => {
   const [template] = useContext(CanvasContext);
 
-  useEffect(() => {}, [Object.keys(template.components), editPannel]);
+  useEffect(() => {}, [editPannel, template]);
   return (
     <View style={[template.style, {overflow: 'hidden'}]}>
       <ImageBackground
