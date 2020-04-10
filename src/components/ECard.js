@@ -23,8 +23,7 @@ const ECard = ({setEditPannel, editPannel}) => {
                   setEditPannel={setEditPannel}
                   type={components[item].type}
                   key={item}
-                  id={item}
-                  style={components[item].style}>
+                  id={item}>
                   {components[item].value}
                 </DraggableText>
               );

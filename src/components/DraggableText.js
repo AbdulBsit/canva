@@ -14,7 +14,6 @@ export default function DraggableText({
   setEditPannel,
   editPannel,
   type,
-  style,
   id,
 }) {
   const [editId, setEditId] = useState(editPannel ? editPannel?.id : null);
@@ -27,6 +26,7 @@ export default function DraggableText({
   useEffect(() => {
     setEditId(editPannel ? editPannel?.id : null);
   }, [editPannel, editId, id, template]);
+
   const handleDelete = () => {
     delete template.components[id];
     updateTemplate(template);
@@ -76,13 +76,14 @@ export default function DraggableText({
         borderStyle: 'dashed',
         borderRadius: 1,
         borderWidth: 2,
+        zIndex: 999,
         alignSelf: 'center',
         borderColor: 'grey',
         transform: [{translateX: pan.x}, {translateY: pan.y}],
       }}
       {...panResponder.panHandlers}>
       <Text
-        style={style}
+        style={template.components[id].style}
         onPress={() => {
           // handle Opening of panel
           setEditPannel({type, id});

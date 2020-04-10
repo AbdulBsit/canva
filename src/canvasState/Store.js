@@ -5,7 +5,7 @@ import Reducer from './Reducer';
 const CanvasContext = createContext();
 
 const StateProvider = ({children}) => {
-  const [state, dispatch] = useReducer(Reducer, {
+  let [state, dispatch] = useReducer(Reducer, {
     backgroundImage: {
       uri: null,
       resizeMode: 'contain',
@@ -14,7 +14,6 @@ const StateProvider = ({children}) => {
     style: {
       height: '100%',
       width: '100%',
-      zIndex: 99,
       backgroundColor: 'lightgreen',
       borderColor: '#000000',
     },

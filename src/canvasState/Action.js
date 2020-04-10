@@ -1,6 +1,12 @@
 import React from 'react';
 
-import {UPDATE_TEMPLATE, UPDATE_BACKGROUND, UPDATE_POSITION} from './Reducer';
+import {
+  UPDATE_TEMPLATE,
+  UPDATE_COLOR,
+  UPDATE_FONT_STYLE,
+  UPDATE_BACKGROUND,
+  UPDATE_POSITION,
+} from './Reducer';
 import {CanvasContext} from './Store';
 export default function useActions() {
   const [state, dispatch] = React.useContext(CanvasContext);
@@ -17,6 +23,12 @@ export default function useActions() {
     },
     editBackgroundImage: function(uri) {
       dispatch({type: UPDATE_BACKGROUND, payload: {uri}});
+    },
+    editBackgroundColor: function(color) {
+      dispatch({type: UPDATE_COLOR, payload: color});
+    },
+    updateFontStyle: function(id, value) {
+      dispatch({type: UPDATE_FONT_STYLE, payload: {value, id}});
     },
   };
 }
