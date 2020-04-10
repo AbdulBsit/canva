@@ -1,77 +1,31 @@
-import React, {useRef, useState} from 'react';
-import {Animated, PanResponder, Text} from 'react-native';
-
+import React, {useRef, useContext, useEffect, useState} from 'react';
+import {Animated, PanResponder, Text, TouchableOpacity} from 'react-native';
+import {CanvasContext} from '../canvasState/Store';
+import useActions from '../canvasState/Action';
+import Feather from 'react-native-vector-icons/Feather';
 export default function DraggableText({
   children,
   setEditPannel,
+  editPannel,
   type,
   style,
   id,
 }) {
+  const [editId, setEditId] = useState(editPannel ? editPannel?.id : null);
   const [opacity, setOpacity] = useState(1);
-  const [state, setState] = useState({
-    backgroundImage: {
-      uri: null,
-      style: {resizeMode: 'contain', flex: 1},
-    },
-
-    style: {
-      height: '100%',
-      width: '100%',
-      backgroundColor: 'blue',
-      borderWidth: 0,
-      borderColor: '#000000',
-      borderRadius: 0,
-    },
-    components: {
-      id1: {
-        type: 'text',
-        style: {
-          zIndex: 2,
-          fontSize: 20,
-          fontWeight: 'bold',
-          color: 'black',
-        },
-        position: {
-          x: 50,
-          y: 100,
-        },
-
-        value: ' I am Centered',
-      },
-      id2: {
-        type: 'text',
-        style: {
-          fontSize: 20,
-          fontWeight: 'bold',
-          color: 'black',
-        },
-        position: {
-          x: 50,
-          y: 100,
-        },
-
-        value: ' I am Centered',
-      },
-      id3: {
-        type: 'image',
-        style: {
-          zIndex: 2,
-          width: '40%',
-          height: '40%',
-        },
-        position: {
-          x: 300,
-          y: 50,
-        },
-
-        uri:
-          'https://static-news.moneycontrol.com/static-mcnews/2019/01/uri-770x433.jpg',
-      },
-    },
-  });
-  const pan = useRef(new Animated.ValueXY(state.components[id].position))
+  const [template] = useContext(CanvasContext);
+  const {setPosition, updateTemplate} = useActions();
+  const pan = useRef(new Animated.ValueXY(template.components[id].position))
     .current;
+
+  useEffect(() => {
+    setEditId(editPannel ? editPannel?.id : null);
+  }, [editPannel, editId, id, template]);
+  const handleDelete = () => {
+    delete template.components[id];
+    updateTemplate(template);
+    setEditPannel(null);
+  };
 
   const panResponder = useRef(
     PanResponder.create({
@@ -79,8 +33,8 @@ export default function DraggableText({
       onPanResponderGrant: () => {
         setOpacity(0.4);
         pan.setOffset({
-          x: state.components[id].position.x,
-          y: state.components[id].position.y,
+          x: template.components[id].position.x,
+          y: template.components[id].position.y,
         });
       },
       onPanResponderMove: Animated.event(
@@ -98,10 +52,8 @@ export default function DraggableText({
       onPanResponderRelease: () => {
         pan.flattenOffset();
 
-        // here sets the position of element in global state
-        state.components[id].position.x = pan.x._value;
-        state.components[id].position.y = pan.y._value;
-        setState(state);
+        // here sets the position of element in global template
+        setPosition(id, pan.x._value, pan.y._value);
         setOpacity(1);
         // open edit panel for text
         setEditPannel({type, id});
@@ -111,13 +63,14 @@ export default function DraggableText({
 
   return (
     <Animated.View
-      key={id}
+      key={editId}
       style={{
-        width: 'auto',
         opacity,
+        backgroundColor: editId === id ? 'lightgrey' : 'rgb(255,255,255,0)',
         borderStyle: 'dashed',
         borderRadius: 1,
         borderWidth: 2,
+        alignSelf: 'center',
         borderColor: 'grey',
         transform: [{translateX: pan.x}, {translateY: pan.y}],
       }}
@@ -130,6 +83,11 @@ export default function DraggableText({
         }}>
         {children}
       </Text>
+      {editId === id && (
+        <TouchableOpacity onPress={handleDelete}>
+          <Feather name="trash-2" size={22} />
+        </TouchableOpacity>
+      )}
     </Animated.View>
   );
 }
