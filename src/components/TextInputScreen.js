@@ -30,6 +30,7 @@ export default function TextInputScreen({editId, onClose}) {
         type: 'text',
         style: {
           fontSize: 20,
+          textAlign: 'center',
           fontWeight: 'bold',
           color: 'black',
         },

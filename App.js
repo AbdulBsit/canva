@@ -6,6 +6,7 @@ const App = () => {
   return (
     <View
       style={{
+        paddingBottom: 0,
         padding: 5,
         flex: 1,
         justifyContent: 'center',

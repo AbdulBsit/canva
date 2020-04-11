@@ -28,7 +28,7 @@ const ECardScreen = () => {
     editBackgroundColor,
     updateFontStyle,
   } = useActions();
-
+  const [aligner, setAligner] = useState(false);
   const [colorPicker, setColorPicker] = useState(null);
   const [sizeRenderer, setSizeRenderer] = useState(null);
   const [colorsArray, setColorsArray] = useState(colors);
@@ -53,18 +53,20 @@ const ECardScreen = () => {
         id1: {
           type: 'text',
           style: {
+            textAlign: 'center',
             fontSize: 20,
             fontWeight: 'bold',
             color: 'black',
           },
           position: {x: -10.581741333007812, y: 417.49365234375},
 
-          value: ' I am Centered',
+          value: 'Test',
         },
         id2: {
           type: 'text',
           style: {
             fontSize: 20,
+            textAlign: 'center',
             fontWeight: 'bold',
             color: 'black',
           },
@@ -97,33 +99,144 @@ const ECardScreen = () => {
       'https://cdn.zeebiz.com/sites/default/files/styles/zeebiz_850x478/public/2019/01/17/69037-uri.jpg',
     );
   };
+  const handleAddComponentOpener = state => {
+    // set all state to null or false
+    setTextScreen(false);
+    setColorPicker(null);
+
+    switch (state) {
+      case 'text':
+        setTextScreen(true);
+        break;
+      case 'color':
+        setColorPicker({pickerFor: 'background'});
+        break;
+      default:
+        return;
+    }
+  };
   const renderAddPannel = () => {
     return (
-      <View style={styles.panel}>
-        <TouchableOpacity
-          style={styles.icon}
-          onPress={() => setTextScreen(true)}>
-          <MaterialCommunityIcons
-            style={styles.panelIcon}
-            name="format-text"
-            size={30}
-          />
-          <Text style={styles.panelText}>Add Text</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.icon} onPress={handleBackgroundImage}>
-          <Icon style={styles.panelIcon} name="image" size={30} />
-          <Text style={styles.panelText}>Add Background Image</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.icon}
-          onPress={() => setColorPicker({pickerFor: 'background'})}>
-          <MaterialCommunityIcons
-            style={styles.panelIcon}
-            name="brush"
-            size={30}
-          />
-          <Text style={styles.panelText}>Color</Text>
-        </TouchableOpacity>
+      <View style={styles.panelView}>
+        <View style={styles.panel}>
+          <TouchableOpacity
+            style={styles.icon}
+            onPress={() => handleAddComponentOpener('text')}>
+            <MaterialCommunityIcons
+              style={[
+                styles.panelIcon,
+                {color: textScreen ? 'green' : 'black'},
+              ]}
+              name="format-text"
+              size={30}
+            />
+            <Text style={styles.panelText}>Add Text</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.icon} onPress={handleBackgroundImage}>
+            <Icon style={styles.panelIcon} name="image" size={30} />
+            <Text style={styles.panelText}>Add Background Image</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.icon}
+            onPress={() => handleAddComponentOpener('color')}>
+            <MaterialCommunityIcons
+              style={[
+                styles.panelIcon,
+                {
+                  color: colorPicker ? 'green' : 'black',
+                },
+              ]}
+              name="brush"
+              size={30}
+            />
+            <Text
+              style={[
+                styles.panelText,
+                {
+                  color: colorPicker ? 'green' : 'black',
+                },
+              ]}>
+              Color
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {colorPicker && renderColorPicker(colorPicker?.pickerFor)}
+      </View>
+    );
+  };
+  const renderTextAligner = () => {
+    return (
+      <View
+        style={{
+          paddingTop: 10,
+          paddingBottom: 10,
+          alignItems: 'center',
+        }}>
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity
+            onPress={() =>
+              updateFontStyle(editPannel?.id ?? null, {
+                textAlign: 'left',
+              })
+            }>
+            <MaterialCommunityIcons
+              style={[
+                styles.alignIcons,
+                {
+                  color:
+                    template.components[editPannel.id].style.textAlign ===
+                    'left'
+                      ? 'blue'
+                      : 'black',
+                },
+              ]}
+              name="format-align-left"
+              size={30}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              updateFontStyle(editPannel?.id ?? null, {
+                textAlign: 'center',
+              })
+            }>
+            <MaterialCommunityIcons
+              style={[
+                styles.alignIcons,
+                {
+                  color:
+                    template.components[editPannel.id].style.textAlign ===
+                    'center'
+                      ? 'blue'
+                      : 'black',
+                },
+              ]}
+              name="format-align-center"
+              size={30}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              updateFontStyle(editPannel?.id ?? null, {
+                textAlign: 'right',
+              })
+            }>
+            <MaterialCommunityIcons
+              style={[
+                styles.alignIcons,
+                {
+                  color:
+                    template.components[editPannel.id].style.textAlign ===
+                    'right'
+                      ? 'blue'
+                      : 'black',
+                },
+              ]}
+              name="format-align-right"
+              size={30}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -133,11 +246,9 @@ const ECardScreen = () => {
         style={{
           paddingTop: 10,
           paddingBottom: 10,
-          justifyContent: 'center',
           alignItems: 'center',
-          flexDirection: 'row',
         }}>
-        <Text style={{fontWeight: 'bold', fontSize: 18}}>Font Size</Text>
+        <Text style={{fontWeight: 'bold', fontSize: 20}}>Font Size</Text>
         <Slider
           thumbTintColor="blue"
           style={{width: 280, height: 40}}
@@ -199,58 +310,121 @@ const ECardScreen = () => {
       );
     }
   };
+  const handleTextEditOpener = state => {
+    // set all false then set State as per state
+    setSizeRenderer(null); // for size render
+    setColorPicker(null); // for color picker
+    setTextScreen(null); // for text screen
+    setAligner(false); //for aligner
+    //state can be size, edit, color,align,fontFamily
+    switch (state) {
+      case 'size':
+        // set size to true
+        setSizeRenderer(true);
+        break;
+      case 'textScreen':
+        setTextScreen(true);
+        break;
+      case 'color':
+        setColorPicker({pickerFor: 'text'});
+        break;
+      case 'aligner':
+        setAligner(true);
+        break;
+    }
+  };
+  const renderTextEditPannel = id => {
+    return (
+      <View style={styles.panelView}>
+        <View style={styles.panel}>
+          <TouchableOpacity
+            style={styles.icon}
+            onPress={() => handleTextEditOpener('textScreen')}>
+            <Icon
+              style={styles.panelIcon}
+              name="edit"
+              size={30}
+              color={textScreen ? '#1fed59' : 'black'}
+            />
+            <Text style={styles.panelText}>Edit</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.icon}
+            onPress={() => Alert.alert('opens font chooser')}>
+            <MaterialCommunityIcons
+              style={styles.panelIcon}
+              name="alphabetical"
+              size={30}
+            />
+            <Text style={styles.panelText}>Font</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.icon}
+            onPress={() => handleTextEditOpener('size')}>
+            <AntDesign
+              style={styles.panelIcon}
+              name="arrowsalt"
+              size={30}
+              color={sizeRenderer ? '#1fed59' : 'black'}
+            />
+            <Text
+              style={[
+                styles.panelText,
+                {color: sizeRenderer ? '#1fed59' : 'black'},
+              ]}>
+              Size
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.icon}
+            onPress={() => handleTextEditOpener('color')}>
+            <MaterialCommunityIcons
+              style={styles.panelIcon}
+              name="brush"
+              size={30}
+              color={colorPicker ? '#1fed59' : 'black'}
+            />
+            <Text
+              style={[
+                styles.panelText,
+                {color: colorPicker ? '#1fed59' : 'black'},
+              ]}>
+              Color
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.icon}
+            onPress={() => handleTextEditOpener('aligner')}>
+            <MaterialCommunityIcons
+              style={styles.panelIcon}
+              name="format-align-center"
+              size={30}
+              color={aligner ? '#1fed59' : 'black'}
+            />
+            <Text
+              style={[
+                styles.panelText,
+                {color: aligner ? '#1fed59' : 'black'},
+              ]}>
+              Align
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{backgroundColor: 'white'}}>
+          {sizeRenderer && renderSizeSlider()}
+          {aligner && renderTextAligner()}
+          {colorPicker && renderColorPicker(colorPicker?.pickerFor)}
+        </View>
+      </View>
+    );
+  };
   const renderEditPannel = (type, id) => {
     switch (type) {
       case 'text':
-        return (
-          <View style={styles.panel}>
-            <TouchableOpacity
-              style={styles.icon}
-              onPress={() => setTextScreen(true)}>
-              <Icon style={styles.panelIcon} name="edit" size={30} />
-              <Text style={styles.panelText}>Edit</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.icon}
-              onPress={() => Alert.alert('opens font chooser')}>
-              <MaterialCommunityIcons
-                style={styles.panelIcon}
-                name="alphabetical"
-                size={30}
-              />
-              <Text style={styles.panelText}>Font</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.icon}
-              onPress={() => setSizeRenderer(true)}>
-              <AntDesign style={styles.panelIcon} name="arrowsalt" size={30} />
-              <Text style={styles.panelText}>Size</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.icon}
-              onPress={() => setColorPicker({pickerFor: 'text'})}>
-              <MaterialCommunityIcons
-                style={styles.panelIcon}
-                name="brush"
-                size={30}
-              />
-              <Text style={styles.panelText}>Color</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.icon}
-              onPress={() => Alert.alert('opens Aligner')}>
-              <MaterialCommunityIcons
-                style={styles.panelIcon}
-                name="format-align-center"
-                size={30}
-              />
-              <Text style={styles.panelText}>Align</Text>
-            </TouchableOpacity>
-          </View>
-        );
+        return renderTextEditPannel(id);
     }
   };
   const handleReset = () => {
@@ -268,25 +442,21 @@ const ECardScreen = () => {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={() => setEditPannel(null)}>
-      <View style={styles.container}>
-        <TouchableWithoutFeedback onPress={handleReset}>
-          <View style={styles.card}>
-            <ECard
-              setTextScreen={setTextScreen}
-              editPannel={editPannel}
-              setEditPannel={setEditPannel}
-            />
-          </View>
-        </TouchableWithoutFeedback>
+    <View style={styles.container}>
+      <TouchableWithoutFeedback onPress={handleReset}>
+        <View style={styles.card}>
+          <ECard
+            setTextScreen={setTextScreen}
+            editPannel={editPannel}
+            setEditPannel={setEditPannel}
+          />
+        </View>
+      </TouchableWithoutFeedback>
 
-        {editPannel
-          ? renderEditPannel(editPannel.type, editPannel.id)
-          : renderAddPannel()}
-        {sizeRenderer && renderSizeSlider()}
-        {colorPicker && renderColorPicker(colorPicker?.pickerFor)}
-      </View>
-    </TouchableWithoutFeedback>
+      {editPannel
+        ? renderEditPannel(editPannel.type, editPannel.id)
+        : renderAddPannel()}
+    </View>
   );
 };
 
@@ -298,15 +468,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
   },
   panel: {
-    flexGrow: 1,
-    height: 'auto',
-    justifyContent: 'flex-end',
     flexDirection: 'row',
-    backgroundColor: 'white',
+    marginLeft: 8,
+    marginRight: 8,
+    paddingBottom: 5,
     borderColor: 'lightgrey',
-    borderWidth: 1,
-    borderTopRightRadius: 15,
-    borderTopLeftRadius: 15,
+    borderBottomWidth: 0.4,
   },
   card: {
     flexShrink: 1,
@@ -327,5 +494,20 @@ const styles = StyleSheet.create({
     paddingLeft: 22,
     marginRight: 22,
     alignItems: 'center',
+  },
+  panelView: {
+    borderTopWidth: 1,
+    borderTopRightRadius: 15,
+    borderTopLeftRadius: 15,
+    borderColor: 'lightgrey',
+    flexDirection: 'column',
+    bottom: 0,
+    alignSelf: 'center',
+    backgroundColor: 'white',
+    position: 'absolute',
+  },
+  alignIcons: {
+    paddingLeft: 40,
+    paddingRight: 40,
   },
 });
