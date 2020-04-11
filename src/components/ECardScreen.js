@@ -584,6 +584,7 @@ const styles = StyleSheet.create({
     borderColor: 'lightgrey',
     borderRadius: 1,
     margin: 15,
+    marginBottom: 90,
   },
   panelText: {
     fontWeight: 'bold',
