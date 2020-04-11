@@ -14,7 +14,7 @@ const StateProvider = ({children}) => {
     style: {
       height: '100%',
       width: '100%',
-      backgroundColor: 'lightgreen',
+      backgroundColor: '#ffffff',
       borderColor: '#000000',
     },
     components: {},

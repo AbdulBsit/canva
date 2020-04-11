@@ -13,7 +13,7 @@ import {
   Dimensions,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
-import ColorPalette from 'react-native-color-palette';
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/Feather';
@@ -23,6 +23,8 @@ import {colors} from '../constant';
 import TextInputScreen from '../components/TextInputScreen';
 import useActions from '../canvasState/Action';
 import {CanvasContext} from '../canvasState/Store';
+import {ColorWheel} from 'react-native-color-wheel';
+var colorsys = require('colorsys');
 const ECardScreen = () => {
   const [template] = useContext(CanvasContext);
   const {
@@ -66,7 +68,7 @@ const ECardScreen = () => {
       style: {
         height: '100%',
         width: '100%',
-        backgroundColor: 'white',
+        backgroundColor: '#ffffff',
         borderWidth: 0,
         borderColor: '#000000',
         borderRadius: 0,
@@ -78,7 +80,7 @@ const ECardScreen = () => {
             textAlign: 'center',
             fontSize: 20,
             fontWeight: 'bold',
-            color: 'black',
+            color: '#000000',
           },
           position: {x: -10.581741333007812, y: 417.49365234375},
 
@@ -90,7 +92,7 @@ const ECardScreen = () => {
             fontSize: 20,
             textAlign: 'center',
             fontWeight: 'bold',
-            color: 'black',
+            color: '#000000',
           },
           position: {x: -13.789215087890625, y: 121.59564208984375},
           value: ' I am Centered',
@@ -324,21 +326,18 @@ const ECardScreen = () => {
       return (
         <Animated.View
           style={{
-            paddingTop: 10,
-            height: 80,
             backgroundColor: 'white',
             bottom: colorPickerAnimation,
           }}>
-          <ScrollView horizontal={true}>
-            <ColorPalette
-              style={{flexDirection: 'row', margin: 10}}
-              onChange={color => editBackgroundColor(color)}
-              value={template.style.backgroundColor}
-              title={null}
-              colors={colorsArray}
-              icon={<Entypo name={'circle'} size={25} color={'white'} />}
-            />
-          </ScrollView>
+          <ColorWheel
+            style={{flex: 1, height: 200}}
+            initialColor={template.style.backgroundColor}
+            onColorChange={color => {
+              console.log(colorsys.hsvToHex(color));
+              editBackgroundColor(colorsys.hsvToHex(color));
+            }}
+            thumbStyle={{height: 5, width: 5, borderRadius: 200}}
+          />
         </Animated.View>
       );
     } else {
@@ -351,23 +350,21 @@ const ECardScreen = () => {
       return (
         <Animated.View
           style={{
-            paddingTop: 10,
-            height: 80,
             backgroundColor: 'white',
             bottom: colorPickerAnimation,
           }}>
-          <ScrollView horizontal={true}>
-            <ColorPalette
-              style={{flexDirection: 'row', margin: 10}}
-              onChange={color =>
-                updateFontStyle(editPannel?.id ?? null, {color})
-              }
-              value={template.style.backgroundColor}
-              title={null}
-              colors={colorsArray}
-              icon={<Entypo name={'circle'} size={25} color={'white'} />}
-            />
-          </ScrollView>
+          <ColorWheel
+            initialColor={
+              template.components[editPannel?.id ?? null].style.color
+            }
+            onColorChange={color =>
+              updateFontStyle(editPannel?.id ?? null, {
+                color: colorsys.hsvToHex(color),
+              })
+            }
+            style={{flex: 1, height: 200}}
+            thumbStyle={{height: 30, width: 30, borderRadius: 30}}
+          />
         </Animated.View>
       );
     }
