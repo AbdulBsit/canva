@@ -7,11 +7,14 @@ import {
   Text,
   TouchableOpacity,
   Alert,
+  Animated,
   ScrollView,
+  Easing,
+  Dimensions,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 import ColorPalette from 'react-native-color-palette';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -28,12 +31,31 @@ const ECardScreen = () => {
     editBackgroundColor,
     updateFontStyle,
   } = useActions();
+
   const [aligner, setAligner] = useState(false);
   const [colorPicker, setColorPicker] = useState(null);
   const [sizeRenderer, setSizeRenderer] = useState(null);
   const [colorsArray, setColorsArray] = useState(colors);
   const [editPannel, setEditPannel] = useState(null);
   const [textScreen, setTextScreen] = useState(false);
+
+  // bottom value initals , for animations
+  const [addPanelAnimation, setAddPanelAnimation] = useState(
+    new Animated.Value(-100),
+  );
+  const [editPannelAnimation, setEditPannelOpacity] = useState(
+    new Animated.Value(-100),
+  );
+  const [sizeRendererAnimation, setSizeRendererAnimation] = useState(
+    new Animated.Value(-100),
+  );
+  const [colorPickerAnimation, setcolorPickerAnimation] = useState(
+    new Animated.Value(-100),
+  );
+  const [alignAnimation, setAlignAnimation] = useState(
+    new Animated.Value(-100),
+  );
+
   useEffect(() => {
     loadTemplate({
       backgroundImage: {
@@ -90,6 +112,7 @@ const ECardScreen = () => {
       },
     });
   }, []);
+
   useEffect(() => {}, [template]);
 
   const handleBackgroundImage = () => {
@@ -115,9 +138,16 @@ const ECardScreen = () => {
         return;
     }
   };
+
   const renderAddPannel = () => {
+    Animated.timing(addPanelAnimation, {
+      duration: 400,
+      toValue: 0,
+      easing: Easing.ease,
+      useNativeDriver: false,
+    }).start();
     return (
-      <View style={styles.panelView}>
+      <Animated.View style={[styles.panelView, {bottom: addPanelAnimation}]}>
         <View style={styles.panel}>
           <TouchableOpacity
             style={styles.icon}
@@ -161,16 +191,23 @@ const ECardScreen = () => {
           </TouchableOpacity>
         </View>
         {colorPicker && renderColorPicker(colorPicker?.pickerFor)}
-      </View>
+      </Animated.View>
     );
   };
   const renderTextAligner = () => {
+    Animated.timing(alignAnimation, {
+      toValue: 0,
+      duration: 500,
+      easing: Easing.ease,
+      useNativeDriver: false,
+    }).start();
     return (
-      <View
+      <Animated.View
         style={{
           paddingTop: 10,
           paddingBottom: 10,
           alignItems: 'center',
+          bottom: alignAnimation,
         }}>
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity
@@ -237,13 +274,20 @@ const ECardScreen = () => {
             />
           </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
     );
   };
   const renderSizeSlider = () => {
+    Animated.timing(sizeRendererAnimation, {
+      toValue: 0,
+      duration: 300,
+      easing: Easing.ease,
+      useNativeDriver: false,
+    }).start();
     return (
-      <View
+      <Animated.View
         style={{
+          bottom: sizeRendererAnimation,
           paddingTop: 10,
           paddingBottom: 10,
           alignItems: 'center',
@@ -265,48 +309,66 @@ const ECardScreen = () => {
         <Text style={{fontWeight: 'bold', fontSize: 18}}>
           {template.components[editPannel?.id ?? null].style.fontSize}px
         </Text>
-      </View>
+      </Animated.View>
     );
   };
   const renderColorPicker = pickerFor => {
     // set color if for background
     if (pickerFor === 'background') {
+      Animated.timing(colorPickerAnimation, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.ease,
+        useNativeDriver: false,
+      }).start();
       return (
-        <ScrollView
+        <Animated.View
           style={{
             paddingTop: 10,
             height: 80,
             backgroundColor: 'white',
-          }}
-          horizontal={true}>
-          <ColorPalette
-            style={{flexDirection: 'row', margin: 10}}
-            onChange={color => editBackgroundColor(color)}
-            value={template.style.backgroundColor}
-            title={null}
-            colors={colorsArray}
-            icon={<Entypo name={'circle'} size={25} color={'white'} />}
-          />
-        </ScrollView>
+            bottom: colorPickerAnimation,
+          }}>
+          <ScrollView horizontal={true}>
+            <ColorPalette
+              style={{flexDirection: 'row', margin: 10}}
+              onChange={color => editBackgroundColor(color)}
+              value={template.style.backgroundColor}
+              title={null}
+              colors={colorsArray}
+              icon={<Entypo name={'circle'} size={25} color={'white'} />}
+            />
+          </ScrollView>
+        </Animated.View>
       );
     } else {
+      Animated.timing(colorPickerAnimation, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.ease,
+        useNativeDriver: false,
+      }).start();
       return (
-        <ScrollView
+        <Animated.View
           style={{
             paddingTop: 10,
             height: 80,
             backgroundColor: 'white',
-          }}
-          horizontal={true}>
-          <ColorPalette
-            style={{flexDirection: 'row', margin: 10}}
-            onChange={color => updateFontStyle(editPannel?.id ?? null, {color})}
-            value={template.style.backgroundColor}
-            title={null}
-            colors={colorsArray}
-            icon={<Entypo name={'circle'} size={25} color={'white'} />}
-          />
-        </ScrollView>
+            bottom: colorPickerAnimation,
+          }}>
+          <ScrollView horizontal={true}>
+            <ColorPalette
+              style={{flexDirection: 'row', margin: 10}}
+              onChange={color =>
+                updateFontStyle(editPannel?.id ?? null, {color})
+              }
+              value={template.style.backgroundColor}
+              title={null}
+              colors={colorsArray}
+              icon={<Entypo name={'circle'} size={25} color={'white'} />}
+            />
+          </ScrollView>
+        </Animated.View>
       );
     }
   };
@@ -321,21 +383,41 @@ const ECardScreen = () => {
       case 'size':
         // set size to true
         setSizeRenderer(true);
+
+        Animated.timing(sizeRendererAnimation, {
+          toValue: -100,
+          duration: 300,
+          easing: Easing.ease,
+          useNativeDriver: false,
+        }).reset();
+
         break;
       case 'textScreen':
         setTextScreen(true);
         break;
       case 'color':
+        Animated.timing(colorPickerAnimation, {
+          toValue: -100,
+          duration: 300,
+          easing: Easing.ease,
+          useNativeDriver: false,
+        }).reset();
         setColorPicker({pickerFor: 'text'});
         break;
       case 'aligner':
+        Animated.timing(alignAnimation, {
+          toValue: -100,
+          duration: 300,
+          easing: Easing.ease,
+          useNativeDriver: false,
+        }).reset();
         setAligner(true);
         break;
     }
   };
   const renderTextEditPannel = id => {
     return (
-      <View style={styles.panelView}>
+      <Animated.View style={[styles.panelView, {bottom: editPannelAnimation}]}>
         <View style={styles.panel}>
           <TouchableOpacity
             style={styles.icon}
@@ -363,9 +445,9 @@ const ECardScreen = () => {
           <TouchableOpacity
             style={styles.icon}
             onPress={() => handleTextEditOpener('size')}>
-            <AntDesign
+            <Ionicons
               style={styles.panelIcon}
-              name="arrowsalt"
+              name="ios-resize"
               size={30}
               color={sizeRenderer ? '#1fed59' : 'black'}
             />
@@ -418,18 +500,32 @@ const ECardScreen = () => {
           {aligner && renderTextAligner()}
           {colorPicker && renderColorPicker(colorPicker?.pickerFor)}
         </View>
-      </View>
+      </Animated.View>
     );
   };
   const renderEditPannel = (type, id) => {
+    Animated.timing(editPannelAnimation, {
+      duration: 500,
+      toValue: 0,
+      easing: Easing.ease,
+      useNativeDriver: false,
+    }).start();
+
     switch (type) {
       case 'text':
         return renderTextEditPannel(id);
     }
   };
   const handleReset = () => {
+    Animated.timing(addPanelAnimation, {
+      toValue: -100,
+      duration: 300,
+      easing: Easing.ease,
+      useNativeDriver: false,
+    }).reset();
     setSizeRenderer(false);
     setColorPicker(null);
+    setAligner(false);
     setEditPannel(null);
   };
   if (textScreen) {
@@ -440,7 +536,15 @@ const ECardScreen = () => {
       />
     );
   }
-
+  const handleEditPannel = value => {
+    setEditPannel(value);
+    Animated.timing(editPannelAnimation, {
+      toValue: -100,
+      duration: 300,
+      easing: Easing.ease,
+      useNativeDriver: false,
+    }).reset();
+  };
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback onPress={handleReset}>
@@ -448,7 +552,7 @@ const ECardScreen = () => {
           <ECard
             setTextScreen={setTextScreen}
             editPannel={editPannel}
-            setEditPannel={setEditPannel}
+            setEditPannel={handleEditPannel}
           />
         </View>
       </TouchableWithoutFeedback>
@@ -476,10 +580,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.4,
   },
   card: {
-    flexShrink: 1,
     borderWidth: 1,
-
-    height: 'auto',
     borderColor: 'lightgrey',
     borderRadius: 1,
     margin: 15,

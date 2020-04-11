@@ -71,6 +71,7 @@ export default function DraggableText({
     <Animated.View
       key={editId}
       style={{
+        position: 'absolute',
         opacity,
         backgroundColor: editId === id ? 'lightgrey' : 'rgb(255,255,255,0)',
         borderStyle: 'dashed',
