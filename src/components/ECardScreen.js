@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useRef, useContext, createRef, useEffect, useState} from 'react';
 import {
   View,
@@ -11,6 +12,7 @@ import {
   ScrollView,
   Easing,
   Dimensions,
+  FlatList,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 
@@ -23,8 +25,8 @@ import {colors} from '../constant';
 import TextInputScreen from '../components/TextInputScreen';
 import useActions from '../canvasState/Action';
 import {CanvasContext} from '../canvasState/Store';
-import {ColorWheel} from 'react-native-color-wheel';
-var colorsys = require('colorsys');
+import ColorPicker from './ColorPicker';
+
 const ECardScreen = () => {
   const [template] = useContext(CanvasContext);
   const {
@@ -37,9 +39,9 @@ const ECardScreen = () => {
   const [aligner, setAligner] = useState(false);
   const [colorPicker, setColorPicker] = useState(null);
   const [sizeRenderer, setSizeRenderer] = useState(null);
-  const [colorsArray, setColorsArray] = useState(colors);
   const [editPannel, setEditPannel] = useState(null);
   const [textScreen, setTextScreen] = useState(false);
+  const [fontPicker, setFontPicker] = useState(false);
 
   // bottom value initals , for animations
   const [addPanelAnimation, setAddPanelAnimation] = useState(
@@ -55,6 +57,9 @@ const ECardScreen = () => {
     new Animated.Value(-100),
   );
   const [alignAnimation, setAlignAnimation] = useState(
+    new Animated.Value(-100),
+  );
+  const [fontPickerAnimation, setFontPickerAnimation] = useState(
     new Animated.Value(-100),
   );
 
@@ -135,6 +140,12 @@ const ECardScreen = () => {
         break;
       case 'color':
         setColorPicker({pickerFor: 'background'});
+        Animated.timing(colorPickerAnimation, {
+          toValue: -100,
+          duration: 300,
+          easing: Easing.ease,
+          useNativeDriver: false,
+        }).reset();
         break;
       default:
         return;
@@ -329,14 +340,9 @@ const ECardScreen = () => {
             backgroundColor: 'white',
             bottom: colorPickerAnimation,
           }}>
-          <ColorWheel
-            style={{flex: 1, height: 200}}
-            initialColor={template.style.backgroundColor}
-            onColorChange={color => {
-              console.log(colorsys.hsvToHex(color));
-              editBackgroundColor(colorsys.hsvToHex(color));
-            }}
-            thumbStyle={{height: 5, width: 5, borderRadius: 200}}
+          <ColorPicker
+            selected={template.style.backgroundColor}
+            onChange={color => editBackgroundColor(color)}
           />
         </Animated.View>
       );
@@ -353,28 +359,76 @@ const ECardScreen = () => {
             backgroundColor: 'white',
             bottom: colorPickerAnimation,
           }}>
-          <ColorWheel
-            initialColor={
-              template.components[editPannel?.id ?? null].style.color
-            }
-            onColorChange={color =>
+          <ColorPicker
+            selected={template.components[editPannel?.id ?? null].style.color}
+            onChange={color =>
               updateFontStyle(editPannel?.id ?? null, {
-                color: colorsys.hsvToHex(color),
+                color,
               })
             }
-            style={{flex: 1, height: 200}}
-            thumbStyle={{height: 30, width: 30, borderRadius: 30}}
           />
         </Animated.View>
       );
     }
   };
+
+  const renderFontPicker = () => {
+    Animated.timing(fontPickerAnimation, {
+      toValue: 0,
+      duration: 300,
+      easing: Easing.ease,
+      useNativeDriver: false,
+    }).start();
+    return (
+      <Animated.View
+        style={{
+          height: 150,
+          margin: 10,
+          alignItems: 'center',
+          backgroundColor: 'white',
+          bottom: fontPickerAnimation,
+        }}>
+        <FlatList
+          keyExtractor={(item, index) => item + index}
+          style={{width: Dimensions.get('window').width}}
+          data={[
+            'normal',
+            'notoserif',
+            'sans-serif',
+            'sans-serif-light',
+            'sans-serif-thin',
+            'sans-serif-condensed',
+            'sans-serif-medium',
+            'serif',
+            'Roboto',
+            'monospace',
+          ]}
+          renderItem={({item, index}) => (
+            <TouchableOpacity
+              key={item + index}
+              onPress={() =>
+                updateFontStyle(editPannel?.id ?? null, {
+                  fontFamily: item,
+                })
+              }>
+              <Text
+                style={{fontFamily: item, fontSize: 18, textAlign: 'center'}}>
+                {item}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+      </Animated.View>
+    );
+  };
+
   const handleTextEditOpener = state => {
     // set all false then set State as per state
     setSizeRenderer(null); // for size render
     setColorPicker(null); // for color picker
     setTextScreen(null); // for text screen
     setAligner(false); //for aligner
+    setFontPicker(false); // font picker
     //state can be size, edit, color,align,fontFamily
     switch (state) {
       case 'size':
@@ -410,6 +464,14 @@ const ECardScreen = () => {
         }).reset();
         setAligner(true);
         break;
+      case 'fontPicker':
+        Animated.timing(fontPickerAnimation, {
+          toValue: -100,
+          duration: 300,
+          easing: Easing.ease,
+          useNativeDriver: false,
+        }).reset();
+        setFontPicker(true);
     }
   };
   const renderTextEditPannel = id => {
@@ -430,7 +492,7 @@ const ECardScreen = () => {
 
           <TouchableOpacity
             style={styles.icon}
-            onPress={() => Alert.alert('opens font chooser')}>
+            onPress={() => handleTextEditOpener('fontPicker')}>
             <MaterialCommunityIcons
               style={styles.panelIcon}
               name="alphabetical"
@@ -496,6 +558,7 @@ const ECardScreen = () => {
           {sizeRenderer && renderSizeSlider()}
           {aligner && renderTextAligner()}
           {colorPicker && renderColorPicker(colorPicker?.pickerFor)}
+          {fontPicker && renderFontPicker()}
         </View>
       </Animated.View>
     );
@@ -520,6 +583,7 @@ const ECardScreen = () => {
       easing: Easing.ease,
       useNativeDriver: false,
     }).reset();
+    setFontPicker(false);
     setSizeRenderer(false);
     setColorPicker(null);
     setAligner(false);

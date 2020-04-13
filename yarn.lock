@@ -2037,11 +2037,6 @@ colors@^1.1.2:
   resolved "https://registry.yarnpkg.com/colors/-/colors-1.4.0.tgz#c50491479d4c1bdaed2c9ced32cf7c7dc2360f78"
   integrity sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==
 
-colorsys@^1.0.17, colorsys@^1.0.22:
-  version "1.0.22"
-  resolved "https://registry.yarnpkg.com/colorsys/-/colorsys-1.0.22.tgz#e08459b297de7d4da4a53c26c3555f5a9609ad88"
-  integrity sha512-KCqF23oqkOD0IUCTLCl0obwGIMyeGFlNWuJ4oRRVKmawvKQeb3x5UvajVeH9AShZWU9hNaIhjXeTGw3iPNtl/Q==
-
 columnify@~1.5.4:
   version "1.5.4"
   resolved "https://registry.yarnpkg.com/columnify/-/columnify-1.5.4.tgz#4737ddf1c7b69a8a7c340570782e947eec8e78bb"
@@ -6452,12 +6447,6 @@ react-is@^16.12.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
-
-"react-native-color-wheel@https://github.com/AbdulBsit/react-native-color-wheel.git":
-  version "0.1.7"
-  resolved "https://github.com/AbdulBsit/react-native-color-wheel.git#9c556521010fbfc192181275616820c036de5c18"
-  dependencies:
-    colorsys "^1.0.17"
 
 react-native-vector-icons@^6.6.0:
   version "6.6.0"
