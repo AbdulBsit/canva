@@ -76,7 +76,7 @@ export default function DraggableText({
         backgroundColor: editId === id ? 'lightgrey' : 'rgb(255,255,255,0)',
         borderStyle: 'dashed',
         borderRadius: 1,
-        borderWidth: 1,
+        borderWidth: editId === id ? 1 : 0,
         zIndex: 999,
         alignSelf: 'center',
         borderColor: 'grey',

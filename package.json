@@ -10,11 +10,13 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/cameraroll": "^1.5.2",
     "@react-native-community/slider": "^2.0.9",
     "npm": "^6.14.4",
     "react": "16.11.0",
     "react-native": "0.62.1",
-    "react-native-vector-icons": "^6.6.0"
+    "react-native-vector-icons": "^6.6.0",
+    "react-native-view-shot": "^3.1.2"
   },
   "devDependencies": {
     "@babel/core": "7.9.0",

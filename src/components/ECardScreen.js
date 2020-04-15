@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   Text,
   TouchableOpacity,
+  PermissionsAndroid,
   Alert,
   Animated,
   ScrollView,
@@ -15,7 +16,7 @@ import {
   FlatList,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
-
+import CameraRoll from '@react-native-community/cameraroll';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/Feather';
@@ -26,8 +27,8 @@ import TextInputScreen from '../components/TextInputScreen';
 import useActions from '../canvasState/Action';
 import {CanvasContext} from '../canvasState/Store';
 import ColorPicker from './ColorPicker';
-
-const ECardScreen = () => {
+import ViewShot, {captureRef} from 'react-native-view-shot';
+const ECardScreen = ({templateData}) => {
   const [template] = useContext(CanvasContext);
   const {
     loadTemplate,
@@ -35,7 +36,7 @@ const ECardScreen = () => {
     editBackgroundColor,
     updateFontStyle,
   } = useActions();
-
+  const viewShotRef = useRef();
   const [aligner, setAligner] = useState(false);
   const [colorPicker, setColorPicker] = useState(null);
   const [sizeRenderer, setSizeRenderer] = useState(null);
@@ -64,60 +65,7 @@ const ECardScreen = () => {
   );
 
   useEffect(() => {
-    loadTemplate({
-      backgroundImage: {
-        uri: null,
-        style: {resizeMode: 'contain', flex: 1},
-      },
-
-      style: {
-        height: '100%',
-        width: '100%',
-        backgroundColor: '#ffffff',
-        borderWidth: 0,
-        borderColor: '#000000',
-        borderRadius: 0,
-      },
-      components: {
-        id1: {
-          type: 'text',
-          style: {
-            textAlign: 'center',
-            fontSize: 20,
-            fontWeight: 'bold',
-            color: '#000000',
-          },
-          position: {x: -10.581741333007812, y: 417.49365234375},
-
-          value: 'Test',
-        },
-        id2: {
-          type: 'text',
-          style: {
-            fontSize: 20,
-            textAlign: 'center',
-            fontWeight: 'bold',
-            color: '#000000',
-          },
-          position: {x: -13.789215087890625, y: 121.59564208984375},
-          value: ' I am Centered',
-        },
-        id3: {
-          type: 'image',
-          style: {
-            width: '40%',
-            height: '40%',
-          },
-          position: {
-            x: 300,
-            y: 50,
-          },
-
-          uri:
-            'https://static-news.moneycontrol.com/static-mcnews/2019/01/uri-770x433.jpg',
-        },
-      },
-    });
+    loadTemplate(templateData);
   }, []);
 
   useEffect(() => {}, [template]);
@@ -606,15 +554,37 @@ const ECardScreen = () => {
       useNativeDriver: false,
     }).reset();
   };
+
+  // saves image to library
+  const saveImage = async () => {
+    try {
+      const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
+      await PermissionsAndroid.request(permission);
+
+      const url = await captureRef(viewShotRef.current);
+      CameraRoll.saveToCameraRoll(url);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        style={{backgroundColor: 'white', alignItems: 'center'}}
+        onPress={saveImage}>
+        <Text style={{color: 'green', fontSize: 20}}>Save</Text>
+      </TouchableOpacity>
+
       <TouchableWithoutFeedback onPress={handleReset}>
         <View style={styles.card}>
-          <ECard
-            setTextScreen={setTextScreen}
-            editPannel={editPannel}
-            setEditPannel={handleEditPannel}
-          />
+          {/* height and width will be of users choice */}
+          <ViewShot ref={viewShotRef} options={{height: 600, width: 400}}>
+            <ECard
+              setTextScreen={setTextScreen}
+              editPannel={editPannel}
+              setEditPannel={handleEditPannel}
+            />
+          </ViewShot>
         </View>
       </TouchableWithoutFeedback>
 

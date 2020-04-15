@@ -1,4 +1,4 @@
-import React, {useRef, useContext, createRef, useEffect, useState} from 'react';
+import React, {forwardRef, useContext, useEffect} from 'react';
 import {View, ImageBackground} from 'react-native';
 import {CanvasContext} from '../canvasState/Store';
 import DraggableText from './DraggableText';
@@ -10,8 +10,9 @@ const ECard = ({setEditPannel, editPannel}) => {
   return (
     <View style={[template.style, {overflow: 'hidden'}]}>
       <ImageBackground
+        resizeMode={template.backgroundImage.resizeMode}
         onPress={() => console.log('hide ')}
-        source={{uri: template.backgroundImage.uri}}
+        source={require('../assets/border.png')}
         style={template.backgroundImage.style}>
         {Object.keys(template.components).map((item, index) => {
           var {components} = template;
